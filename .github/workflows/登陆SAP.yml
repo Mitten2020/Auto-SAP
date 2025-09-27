@@ -1,4 +1,4 @@
-name: SAP BTP Auto Login
+name: 自动登陆SAP
 
 on:
   schedule:
