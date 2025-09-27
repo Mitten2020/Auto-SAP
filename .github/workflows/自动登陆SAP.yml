@@ -22,7 +22,7 @@ jobs:
         run: npm install playwright axios form-data
 
       - name: Run login script
-        run: node scripts/login.js
+        run: node login.js
         env:
           SAP_EMAIL: ${{ secrets.SAP_EMAIL }}
           SAP_PASSWORD: ${{ secrets.SAP_PASSWORD }}
