@@ -24,8 +24,8 @@ jobs:
       - name: Run login script
         run: node login.js
         env:
-          SAP_EMAIL: ${{ secrets.SAP_EMAIL }}
-          SAP_PASSWORD: ${{ secrets.SAP_PASSWORD }}
+          SAP_EMAIL: ${{ secrets.EMAIL }}
+          SAP_PASSWORD: ${{ secrets.PASSWORD }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
