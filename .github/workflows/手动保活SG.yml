@@ -6,14 +6,9 @@ on:
   workflow_dispatch:  # 允许手动触发
 
 jobs:
-    - name: Verify applications status
-      run: |
-        echo "区域 SG 中所有应用的最终状态:"
-        cf apps
-
-  restart-us-apps:
+ restart-sg-apps:
     runs-on: ubuntu-latest
-    name: Restart US Apps
+    name: Restart SG Apps
     if: always()  
     continue-on-error: true
     
@@ -30,8 +25,8 @@ jobs:
 
     - name: Determine CF API endpoint
       run: |
-        echo "CF_API=https://api.cf.us10-001.hana.ondemand.com" >> $GITHUB_ENV
-        echo "使用API端点: $CF_API (区域: US)"
+        echo "CF_API=https://api.cf.ap21.hana.ondemand.com" >> $GITHUB_ENV
+        echo "使用API端点: $CF_API (区域: SG)"
 
     - name: Login to Cloud Foundry
       run: |
@@ -52,13 +47,13 @@ jobs:
         cf login -a ${{ env.CF_API }} -u "${{ secrets.EMAIL }}" -p "${{ secrets.PASSWORD }}" -o "$ORG" -s "$SPACE"
 
     - name: Get all applications
-      id: get-us-apps
+      id: get-sg-apps
       run: |
         # 获取所有应用名称（跳过前 3 行提示和表头）
         apps=$(cf apps | awk 'NR>3 {print $1}' | grep -v '^$')
         echo "发现的应用:"
         echo "$apps"
-        
+
         # 直接输出到 GITHUB_OUTPUT（多行字符串）
         echo "apps<<EOF" >> $GITHUB_OUTPUT
         echo "$apps" >> $GITHUB_OUTPUT
@@ -67,14 +62,14 @@ jobs:
     - name: Restart all applications
       run: |
         # 从上一步获取应用列表
-        apps="${{ steps.get-us-apps.outputs.apps }}"
+        apps="${{ steps.get-sg-apps.outputs.apps }}"
 
         if [ -z "$apps" ]; then
-          echo "在区域 US 中未找到任何应用"
+          echo "在区域 SG 中未找到任何应用"
           exit 0
         fi
         
-        echo "重启区域 US 中的应用:"
+        echo "重启区域 SG 中的应用:"
         echo "$apps"
         
         # 重启每个应用
@@ -88,5 +83,6 @@ jobs:
 
     - name: Verify applications status
       run: |
-        echo "区域 US 中所有应用的最终状态:"
+        echo "区域 SG 中所有应用的最终状态:"
         cf apps
+
