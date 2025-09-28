@@ -22,7 +22,7 @@ async function sendToTelegram(filePath, caption) {
     emailSubmit: 'button[type="submit"], button[id="continue"], #logOnFormSubmit',
     passwordInput: 'input[type="password"], input[id="j_password"]',
     passwordSubmit: 'button[type="submit"], #logOnFormSubmit',
-    goToTrial: 'a:has-text("Go To Your Trial Account"), button:has-text("Go To Your Trial Account")'
+    goToTrial: 'a:has-text("转到您的试用账户"), button:has-text("转到您的试用账户")'
   };
 
   let browser;
@@ -56,42 +56,20 @@ async function sendToTelegram(filePath, caption) {
     // 等待登录完成
     await page.waitForTimeout(8000);
 
-
-
     // Step 3: 截图登录后的页面
     const loginScreenshot = "login-success.png";
     await page.screenshot({ path: loginScreenshot, fullPage: true });
     await sendToTelegram(loginScreenshot, "✅ SAP BTP 登录成功页面");
 
-
-// Step 4: 点击隐私同意按钮
-console.log("👉 检测并关闭 Consent Banner...");
-
-// 尝试多种可能的选择器
-const consentSelectors = [
-    '#truste-consent-button',
-    '.truste-button', 
-    '.consent-button',
-    '[aria-label*="consent"]',
-    'button[onclick*="consent"]'
-];
-
-for (const selector of consentSelectors) {
-    try {
-        const consentButton = await page.$(selector);
-        if (consentButton) {
-            console.log(`找到 consent button: ${selector}`);
-            await consentButton.click();
-            await page.waitForTimeout(2000); // 等待更长的时间确保弹窗关闭
-            break;
-        }
-    } catch (error) {
-        console.log(`选择器 ${selector} 未找到按钮`);
+    // Step 4: 点击 “转到您的试用账户”
+    console.log("👉 检测并关闭 Consent Banner...");
+    const consentButton = await page.$('#truste-consent-button');
+    if (consentButton) {
+    await consentButton.click();
+    await page.waitForTimeout(1000);
     }
-}
 
-
-    console.log("👉 寻找并点击 'Go ToYour Trial Account' 按钮...");
+    console.log("👉 点击 '转到您的试用账户'...");
     await page.waitForSelector(SELECTORS.goToTrial, { timeout: 20000 });
     await page.click(SELECTORS.goToTrial, { force: true });
 
